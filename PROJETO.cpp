@@ -11,7 +11,7 @@ Miguel Borges Magalhães, 978
 //biblioteca locale.h permite usar os caracteres da lingua portuguesa
 using namespace std;
 
-void inserirItem(){// testando github para colaboradores ######################################################################
+void inserirItem(){
 	cout << "Funcionalidade em construção" << endl;
 }
 
