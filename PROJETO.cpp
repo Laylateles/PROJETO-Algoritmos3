@@ -1,9 +1,9 @@
 /*
 Mariana Bissaro Weiss, 2281
-Layla VictÛria Sousa Teles, 2426
+Layla Vict√≥ria Sousa Teles, 2426
 livia oliveira santos, 2290
 Maria Clara Freitas Soares, 712
-Miguel Borges Magalh„es, 978
+Miguel Borges Magalh√£es, 978
 */
 
 #include <iostream>
@@ -11,42 +11,42 @@ Miguel Borges Magalh„es, 978
 //biblioteca locale.h permite usar os caracteres da lingua portuguesa
 using namespace std;
 
-void inserirItem(){
-	cout << "Funcionalidade em construÁ„o" << endl;
+void inserirItem(){// testando github para colaboradores ######################################################################
+	cout << "Funcionalidade em constru√ß√£o" << endl;
 }
 
 void cadastrarSimilaridades(){
-	cout << "Funcionalidade em construÁ„o" << endl;
+	cout << "Funcionalidade em constru√ß√£o" << endl;
 }
 
 void buscarItens(){
-	cout << "Funcionalidade em construÁ„o" << endl;
+	cout << "Funcionalidade em constru√ß√£o" << endl;
 }
 
 void verificarItem(){
-	cout << "Funcionalidade em construÁ„o" << endl;
+	cout << "Funcionalidade em constru√ß√£o" << endl;
 }
 
-void listarItemA(){ //listar item em ordem alfabÈtica
-	 cout << "Funcionalidade em construÁ„o" << endl;
+void listarItemA(){ //listar item em ordem alfab√©tica
+	 cout << "Funcionalidade em constru√ß√£o" << endl;
 }
 
 void listarItemR(){ //listar itens em ordem decrescente de raridade
-	cout << "Funcionalidade em construÁ„o" << endl;
+	cout << "Funcionalidade em constru√ß√£o" << endl;
 }
 
 void contarItens(){
-	cout << "Funcionalidade em construÁ„o" << endl;
+	cout << "Funcionalidade em constru√ß√£o" << endl;
 }
 
 void remover(){ //remover itens menos raros
-	cout << "Funcionalidade em construÁ„o" << endl;
+	cout << "Funcionalidade em constru√ß√£o" << endl;
 }
 
 int main () {
 
 setlocale(LC_ALL, "Portuguese");
-//funÁ„o da biblioteca locale
+//fun√ß√£o da biblioteca locale
 
 	int opcao;
 	do{
@@ -54,14 +54,14 @@ setlocale(LC_ALL, "Portuguese");
         cout << "| 1. Inserir item                                   |" << endl;
         cout << "| 2. Cadastrar similaridade entre itens;            |" << endl;
         cout << "| 3. Buscar itens similares;                        |" << endl;
-        cout << "| 4. Verificar a existÍncia de um item;             |" << endl;
-        cout << "| 5. Listar itens (ordem alfabÈtica de nome);       |" << endl;
+        cout << "| 4. Verificar a exist√™ncia de um item;             |" << endl;
+        cout << "| 5. Listar itens (ordem alfab√©tica de nome);       |" << endl;
         cout << "| 6. Listar itens (ordem decrescente de raridade)   |" << endl;
-        cout << "| 7. Contar itens com mesma propriedade m·gica;     |" << endl;
+        cout << "| 7. Contar itens com mesma propriedade m√°gica;     |" << endl;
         cout << "| 8. Remover itens menos raros;                     |" << endl;
 		cout << "| 9. Sair                                           |" << endl;
         cout << "=====================================================" << endl;
-        cout << "Escolha uma opÁ„o: " << endl;
+        cout << "Escolha uma op√ß√£o: " << endl;
         cin >> opcao;
 
 
