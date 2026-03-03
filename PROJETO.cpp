@@ -4,6 +4,7 @@ Layla Victória Sousa Teles, 2426
 livia oliveira santos, 2290
 Maria Clara Freitas Soares, 712
 Miguel Borges Magalhães, 978
+Ruan Carlo Martins Garcia,487
 */
 
 #include <iostream>
