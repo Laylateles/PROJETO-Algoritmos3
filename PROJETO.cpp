@@ -4,15 +4,46 @@ Layla Victória Sousa Teles, 2426
 livia oliveira santos, 2290
 Maria Clara Freitas Soares, 712
 Miguel Borges Magalhães, 978
+Ruan Carlo Martins Garcia,487
 */
 
 #include <iostream>
 #include <locale.h>
+#include <list>
 //biblioteca locale.h permite usar os caracteres da lingua portuguesa
 using namespace std;
 
-void inserirItem(){// testando github para colaboradores ######################################################################
-	cout << "Funcionalidade em construção" << endl;
+struct inserirObj{
+	string nomeItem,nomeDono,propMagica;
+	int id,raridade; // raridade = numero de 0 a 100 onde 0=comum,100=raríssimo
+};
+
+struct grafo{//grafo para a similaridade entre os itens
+	int destino,peso; // para apontar as arestas do grafo, não precisa de origem pois o id do item ja nos dá à origem
+};
+
+list<inserirObj> itens; // criei uma lista para adicionar os itens, cada posição da lista é um item
+void inserirItem(){
+	inserirObj novo;// criei uma variavel do tipo da struct
+
+	cout << "Nome do Item: " << endl;
+	cin >> novo.nomeItem;
+
+	cout << "Nome do Dono: " << endl;
+	cin >> novo.nomeDono;
+
+	cout << "Propriedade mágica do item: " << endl;
+	cin >> novo.propMagica;
+
+	cout << "ID: " << endl;
+	cin >> novo.id;
+
+	cout << "Raridade(0 a 100): " << endl;
+	cin >> novo.raridade;
+
+	itens.push_back(novo);// adicionei na minha lista de itens o meu novo item
+
+	cout << "Item adicionado!\n";
 }
 
 void cadastrarSimilaridades(){
