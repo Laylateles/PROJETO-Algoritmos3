@@ -46,8 +46,20 @@ void inserirItem(){
 	cout << "Item adicionado!\n";
 }
 
+list<grafo> adj[1000]; // grafo
 void cadastrarSimilaridades(){
-	cout << "Funcionalidade em construção" << endl;
+	int id1,id2,s;
+	cout << "Digite o ID do item 1: " << endl;
+	cin >> id1;
+	cout << "Digite o ID do item 2: " <<endl;
+	cin >> id2;
+	cout << "Similaridade entre eles: " <<endl;
+	cin >> s;
+
+	adj[id1].push_back({id2,s});// onde s é o peso
+	adj[id2].push_back({id1,s}); // se for um grafo não orientado
+
+	cout << "Similaridade cadastrada!\n";
 }
 
 void buscarItens(){
