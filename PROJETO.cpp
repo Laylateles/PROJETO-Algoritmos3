@@ -82,9 +82,9 @@ void buscarItens(){
 		if(aresta.peso > X){// verifica se a similaridade é maior que X
 			for(auto& item: itens){//aqui ele percorre a lista com os itens
 				if(item.id == aresta.destino && item.nomeDono != jogadorJ){//aqui ele verifica se o id do item é igual o id do item que eu quero verificar
-					 cout << "ID: " << item.id
-                         << " | Nome: " << item.nomeItem
-                         << " | Dono: " << item.nomeDono
+					 cout << "ID: " << item.id;
+                         << " | Nome: " << item.nomeItem;
+                         << " | Dono: " << item.nomeDono;
                          << " | Similaridade: " << aresta.peso << "\n";
 					encontrou = true;
 	}
