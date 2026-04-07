@@ -59,7 +59,7 @@ void cadastrarSimilaridades(){
 	cout << "Similaridade entre eles: " <<endl;
 	cin >> s;
 
-	adj[id1].push_back({id2,s});// // aresta de id1 → id2 com peso s
+	adj[id1].push_back({id2,s});// // aresta de id1 ? id2 com peso s
 	adj[id2].push_back({id1,s}); // se for um grafo não orientado
 
 	cout << "Similaridade cadastrada!\n";
@@ -83,13 +83,16 @@ void buscarItens(){
 			for(auto& item: itens){//aqui ele percorre a lista com os itens
 				if(item.id == aresta.destino && item.nomeDono != jogadorJ){//aqui ele verifica se o id do item é igual o id do item que eu quero verificar
 					 cout << "ID: " << item.id;
-                         << " | Nome: " << item.nomeItem;
-                         << " | Dono: " << item.nomeDono;
-                         << " | Similaridade: " << aresta.peso << "\n";
+                     cout << " | Nome: " << item.nomeItem;
+                     cout << " | Dono: " << item.nomeDono;
+                     cout << " | Similaridade: " << aresta.peso << "\n";
 					encontrou = true;
 	}
 	if(!encontrou)
-		cout << "Item não encontrado!" <<endl
+		cout << "Item não encontrado!" <<endl;
+}
+		}
+	}
 }
 
 void verificarItem(){
@@ -111,6 +114,7 @@ void contarItens(){
 void remover(){ //remover itens menos raros
 	cout << "Funcionalidade em construção" << endl;
 }
+
 
 int main () {
 
