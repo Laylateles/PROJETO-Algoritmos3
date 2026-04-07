@@ -10,19 +10,22 @@ Ruan Carlo Martins Garcia,487
 #include <iostream>
 #include <locale.h>
 #include <list>
+#include <string>
 //biblioteca locale.h permite usar os caracteres da lingua portuguesa
 using namespace std;
 
+// para adicionar um novo item
 struct inserirObj{
 	string nomeItem,nomeDono,propMagica;
 	int id,raridade; // raridade = numero de 0 a 100 onde 0=comum,100=raríssimo
 };
 
-struct grafo{//grafo para a similaridade entre os itens
-	int destino,peso; // para apontar as arestas do grafo, não precisa de origem pois o id do item ja nos dá à origem
+// Struct que representa uma aresta do grafo de similaridade
+struct grafo{
+	int destino,peso; // não precisa de origem pois o id do item ja nos dá à origem, destino = id do item relacionado, peso = valor de similaridade
 };
 
-list<inserirObj> itens; // criei uma lista para adicionar os itens, cada posição da lista é um item
+list<inserirObj> itens; // criei uma lista para adicionar os itens cadastrados, cada posição da lista é um item
 void inserirItem(){
 	inserirObj novo;// criei uma variavel do tipo da struct
 
@@ -41,17 +44,55 @@ void inserirItem(){
 	cout << "Raridade(0 a 100): " << endl;
 	cin >> novo.raridade;
 
-	itens.push_back(novo);// adicionei na minha lista de itens o meu novo item
+	itens.push_back(novo);// adicionei na minha lista de itens o meu novo item, eu adiciono o item no final da lista
 
 	cout << "Item adicionado!\n";
 }
 
+list<grafo> adj[1000]; // lista de adjacência do grafo (índice = id do item)
 void cadastrarSimilaridades(){
-	cout << "Funcionalidade em construção" << endl;
+	int id1,id2,s;
+	cout << "Digite o ID do item 1: " << endl;
+	cin >> id1;
+	cout << "Digite o ID do item 2: " <<endl;
+	cin >> id2;
+	cout << "Similaridade entre eles: " <<endl;
+	cin >> s;
+
+	adj[id1].push_back({id2,s});// // aresta de id1 ? id2 com peso s
+	adj[id2].push_back({id1,s}); // se for um grafo não orientado
+
+	cout << "Similaridade cadastrada!\n";
 }
 
 void buscarItens(){
-	cout << "Funcionalidade em construção" << endl;
+	int idC;// o item que eu quero analisar --- o id dele
+	double X; // a similaridade entre os itens tem que ser maior que esse valor X
+	string jogadorJ;// vou olhar os itens que não são desse jogador
+	
+	cout << "Digite o código do item:" << endl;
+	cin >> idC;
+	cout << "Digite o valor minimo de similaridade:" << endl;
+	cin >> X;
+	cout << "Digite o nome do jogador:" << endl;
+	cin >> jogadorJ;
+
+	bool encontrou = false;
+	for(auto& aresta : adj[idC]){// aqui ele percorre todos os vizinhos do item C,  porque na lista de adjacencia é armazenado os vizinhos de cada id
+		if(aresta.peso > X){// verifica se a similaridade é maior que X
+			for(auto& item: itens){//aqui ele percorre a lista com os itens
+				if(item.id == aresta.destino && item.nomeDono != jogadorJ){//aqui ele verifica se o id do item é igual o id do item que eu quero verificar
+					 cout << "ID: " << item.id;
+                     cout << " | Nome: " << item.nomeItem;
+                     cout << " | Dono: " << item.nomeDono;
+                     cout << " | Similaridade: " << aresta.peso << "\n";
+					encontrou = true;
+	}
+	if(!encontrou)
+		cout << "Item não encontrado!" <<endl;
+}
+		}
+	}
 }
 
 void verificarItem(){
@@ -73,6 +114,7 @@ void contarItens(){
 void remover(){ //remover itens menos raros
 	cout << "Funcionalidade em construção" << endl;
 }
+
 
 int main () {
 
