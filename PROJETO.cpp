@@ -57,13 +57,14 @@ void inserirItem(){
 	inserirObj novo;// criei uma variavel do tipo da struct
 
 	cout << "Nome do Item: " << endl;
-	cin >> novo.nomeItem;
+	cin.ignore();
+	getline(cin, novo.nomeItem);
 
 	cout << "Nome do Dono: " << endl;
-	cin >> novo.nomeDono;
+	getline(cin, novo.nomeDono);
 
 	cout << "Propriedade mÃ¡gica do item: " << endl;
-	cin >> novo.propMagica;
+	getline(cin, novo.propMagica);
 
 	cout << "ID: " << endl;
 	cin >> novo.id;
@@ -121,7 +122,7 @@ void buscarItens(){
 	bool encontrou = false;
 	for(it = adj[idC].begin(); it != adj[idC].end(); it++){ // aqui ele percorre todos os vizinhos do item C,  porque na lista de adjacencia Ã© armazenado os vizinhos de cada id
 		if(it->peso > X){ // verifica se a similaridade Ã© maior que X
-			for(it2 = itens.begin(); it2 != itens.begin(); it2++){ //aqui ele percorre a lista com os itens
+			for(it2 = itens.begin(); it2 != itens.end(); it2++){ //aqui ele percorre a lista com os itens
 				if(it2->id == it->destino && it2->nomeDono != jogadorJ){ //aqui ele verifica se o id do item Ã© igual o id do item que eu quero verificar
 					cout << "ID: " << it2->id;
 					cout << " | Nome: " << it2->nomeItem;
