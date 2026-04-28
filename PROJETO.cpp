@@ -42,6 +42,7 @@ void inserirItem(){
 	cin >> novo.raridade;
 
 	itens.push_back(novo);// adicionei na minha lista de itens o meu novo item
+	raiz = inserirABB(raiz, novo);
 
 	cout << "Item adicionado!\n";
 }
@@ -51,7 +52,42 @@ void cadastrarSimilaridades(){
 }
 
 void buscarItens(){
-	cout << "Funcionalidade em construção" << endl;
+	limparTela();
+	cout << "=== BUSCAR ITENS ===" << endl;
+
+	int idC;
+	double X;
+	string jogador;
+
+	cout << "Digite o código do item:" << endl;
+	cin >> idC;
+
+	cout << "Digite o valor minimo de similaridade:" << endl;
+	cin >> X;
+
+	cout << "Digite o nome do jogador:" << endl;
+	cin >> jogadorJ;
+
+	bool encontrou = false;
+
+	for(auto it = adj[idC].begin(); it != adj[idC].end(); it++){
+		if(it->peso > X){
+			No* encontrado = buscarABB(raiz, it->destino);
+			if(encontrado != NULL && encontrado->item.nomeDono != jogadorJ){
+				cout << "ID: " << encontrado->item.id;
+				cout << " | Nome: " << encontrado->item.nomeItem;
+				cout << " | Dono: " << encontrado->item.nomeDono;
+				cout << " | Similaridade: " << it->peso << endl;
+
+				encontrou = true;
+			}
+		}
+	}
+
+	if(!encontrou)
+		cout<< "Item nao encontrado!" << endl;
+
+	esperarESC();
 }
 
 void verificarItem(){
