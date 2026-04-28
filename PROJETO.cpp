@@ -52,7 +52,6 @@ struct No{
     No* dir;
 };
 
-list<Aresta> adj[1000];
 No* raiz = NULL;
 list<inserirObj> itens; // criei uma lista para adicionar os itens, cada posição da lista é um item
 
