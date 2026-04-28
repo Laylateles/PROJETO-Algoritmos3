@@ -22,7 +22,45 @@ struct grafo{//grafo para a similaridade entre os itens
 	int destino,peso; // para apontar as arestas do grafo, não precisa de origem pois o id do item ja nos dá à origem
 };
 
+struct No{
+    inserirObj item;
+    No* esq;
+    No* dir;
+};
+
+
+list<Aresta> adj[1000];
+No* raiz = NULL;
 list<inserirObj> itens; // criei uma lista para adicionar os itens, cada posição da lista é um item
+
+No* inserirABB(No* raiz, inserirObj novo){
+    if(raiz == NULL){
+        No* novoNo = new No;
+        novoNo->item = novo;
+        novoNo->esq = NULL;
+        novoNo->dir = NULL;
+        return novoNo;
+    }
+
+    if(novo.id < raiz->item.id)
+        raiz->esq = inserirABB(raiz->esq, novo);
+    else if(novo.id > raiz->item.id)
+        raiz->dir = inserirABB(raiz->dir, novo);
+
+    return raiz;
+}
+
+No* buscarABB(No* raiz, int id){
+    if(raiz == NULL || raiz->item.id == id)
+        return raiz;
+
+    if(id < raiz->item.id)
+        return buscarABB(raiz->esq, id);
+    else
+        return buscarABB(raiz->dir, id);
+}
+
+
 void inserirItem(){
 	inserirObj novo;// criei uma variavel do tipo da struct
 
