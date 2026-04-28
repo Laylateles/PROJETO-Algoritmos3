@@ -35,7 +35,6 @@ void esperarESC(){
     }
 }
 
-
 // para adicionar um novo item
 struct inserirObj{
 	string nomeItem, nomeDono, propMagica;
@@ -47,7 +46,42 @@ struct Aresta{
 	int destino, peso; // nÃ£o precisa de origem pois o id do item ja nos dÃ¡ Ã  origem, destino = id do item relacionado, peso = valor de similaridade
 };
 
-list<inserirObj> itens; // criei uma lista para adicionar os itens cadastrados, cada posiÃ§Ã£o da lista Ã© um item
+struct No{
+    inserirObj item;
+    No* esq;
+    No* dir;
+};
+
+list<Aresta> adj[1000];
+No* raiz = NULL;
+list<inserirObj> itens; // criei uma lista para adicionar os itens, cada posição da lista é um item
+
+No* inserirABB(No* raiz, inserirObj novo){
+    if(raiz == NULL){
+        No* novoNo = new No;
+        novoNo->item = novo;
+        novoNo->esq = NULL;
+        novoNo->dir = NULL;
+        return novoNo;
+    }
+
+    if(novo.id < raiz->item.id)
+        raiz->esq = inserirABB(raiz->esq, novo);
+    else if(novo.id > raiz->item.id)
+        raiz->dir = inserirABB(raiz->dir, novo);
+
+    return raiz;
+}
+
+No* buscarABB(No* raiz, int id){
+    if(raiz == NULL || raiz->item.id == id)
+        return raiz;
+
+    if(id < raiz->item.id)
+        return buscarABB(raiz->esq, id);
+    else
+        return buscarABB(raiz->dir, id);
+}
 
 void inserirItem(){
 	
@@ -73,6 +107,7 @@ void inserirItem(){
 	cin >> novo.raridade;
 
 	itens.push_back(novo);// adicionei na minha lista de itens o meu novo item, eu adiciono o item no final da lista
+	raiz = inserirABB(raiz, novo);
 
 	cout << "Item adicionado!" << endl;
 	
@@ -102,20 +137,21 @@ void cadastrarSimilaridades(){
 }
 
 void buscarItens(){
-	
 	limparTela();
-    cout << "=== BUSCAR ITENS ===" << endl;
-    
-	int idC;// o item que eu quero analisar --- o id dele
-	double X; // a similaridade entre os itens tem que ser maior que esse valor X
-	string jogadorJ;// vou olhar os itens que nÃ£o sÃ£o desse jogador
+	cout << "=== BUSCAR ITENS ===" << endl;
+
+	int idC;
+	double X;
+	string jogadorJ;
 	list<Aresta>::iterator it;
 	list<inserirObj>::iterator it2;
-	
+
 	cout << "Digite o código do item:" << endl;
 	cin >> idC;
+
 	cout << "Digite o valor minimo de similaridade:" << endl;
 	cin >> X;
+
 	cout << "Digite o nome do jogador:" << endl;
 	cin >> jogadorJ;
 
@@ -133,9 +169,10 @@ void buscarItens(){
 			}
 		}
 	}
+
 	if(!encontrou)
-		cout << "Item não encontrado!" << endl;
-	
+		cout<< "Item nao encontrado!" << endl;
+
 	esperarESC();
 }
 
@@ -231,3 +268,4 @@ int main (){
 
 	return 0;
 }
+
