@@ -208,7 +208,8 @@ void remover(){  //remover itens menos raros
     esperarESC();
 }
 
-int main () {
+
+int main (){
 
 	setlocale(LC_ALL, "Portuguese");
 //funÃ§Ã£o da biblioteca locale
