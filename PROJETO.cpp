@@ -1,7 +1,7 @@
 /*
 Mariana Bissaro Weiss, 2281
 Layla Victória Sousa Teles, 2426
-livia oliveira santos, 2290
+Livia oliveira santos, 2290
 Maria Clara Freitas Soares, 712
 Miguel Borges Magalhães, 978
 Ruan Carlo Martins Garcia,487
@@ -35,7 +35,6 @@ void esperarESC(){
     }
 }
 
-
 // para adicionar um novo item
 struct inserirObj{
 	string nomeItem, nomeDono, propMagica;
@@ -47,7 +46,41 @@ struct Aresta{
 	int destino, peso; // nÃ£o precisa de origem pois o id do item ja nos dÃ¡ Ã  origem, destino = id do item relacionado, peso = valor de similaridade
 };
 
-list<inserirObj> itens; // criei uma lista para adicionar os itens cadastrados, cada posiÃ§Ã£o da lista Ã© um item
+struct No{
+    inserirObj item;
+    No* esq;
+    No* dir;
+};
+
+No* raiz = NULL;
+list<inserirObj> itens; // criei uma lista para adicionar os itens, cada posição da lista é um item
+
+No* inserirABB(No* raiz, inserirObj novo){
+    if(raiz == NULL){
+        No* novoNo = new No;
+        novoNo->item = novo;
+        novoNo->esq = NULL;
+        novoNo->dir = NULL;
+        return novoNo;
+    }
+
+    if(novo.id < raiz->item.id)
+        raiz->esq = inserirABB(raiz->esq, novo);
+    else if(novo.id > raiz->item.id)
+        raiz->dir = inserirABB(raiz->dir, novo);
+
+    return raiz;
+}
+
+No* buscarABB(No* raiz, int id){
+    if(raiz == NULL || raiz->item.id == id)
+        return raiz;
+
+    if(id < raiz->item.id)
+        return buscarABB(raiz->esq, id);
+    else
+        return buscarABB(raiz->dir, id);
+}
 
 void inserirItem(){
 	
@@ -73,6 +106,7 @@ void inserirItem(){
 	cin >> novo.raridade;
 
 	itens.push_back(novo);// adicionei na minha lista de itens o meu novo item, eu adiciono o item no final da lista
+	raiz = inserirABB(raiz, novo);
 
 	cout << "Item adicionado!" << endl;
 	
@@ -102,20 +136,21 @@ void cadastrarSimilaridades(){
 }
 
 void buscarItens(){
-	
 	limparTela();
-    cout << "=== BUSCAR ITENS ===" << endl;
-    
-	int idC;// o item que eu quero analisar --- o id dele
-	double X; // a similaridade entre os itens tem que ser maior que esse valor X
-	string jogadorJ;// vou olhar os itens que nÃ£o sÃ£o desse jogador
+	cout << "=== BUSCAR ITENS ===" << endl;
+
+	int idC;
+	double X;
+	string jogadorJ;
 	list<Aresta>::iterator it;
 	list<inserirObj>::iterator it2;
-	
+
 	cout << "Digite o código do item:" << endl;
 	cin >> idC;
+
 	cout << "Digite o valor minimo de similaridade:" << endl;
 	cin >> X;
+
 	cout << "Digite o nome do jogador:" << endl;
 	cin >> jogadorJ;
 
@@ -133,23 +168,89 @@ void buscarItens(){
 			}
 		}
 	}
+
 	if(!encontrou)
-		cout << "Item não encontrado!" << endl;
-	
+		cout<< "Item nao encontrado!" << endl;
+
 	esperarESC();
 }
 
-void verificarItem(){
-	
+bool buscarNomeABB(No* noAtual, string nomeBusca) { // funçao auxiliar para buscar por nome
+    if (noAtual == NULL) return false;
+    if (noAtual->item.nomeItem == nomeBusca) return true;
+    
+    return buscarNomeABB(noAtual->esq, nomeBusca) || buscarNomeABB(noAtual->dir, nomeBusca);
+}
+
+void verificarItem(){ // verificação para ver se o item existe pelo nome
 	limparTela();
-    cout << "Funcionalidade em construcao" << endl;
+    cout << "=== VERIFICAR EXISTENCIA DE ITEM ===" << endl;
+    
+    string nomeBusca;
+    cout << "Digite o nome do item que deseja buscar: " << endl;
+    cin.ignore();
+    getline(cin, nomeBusca);
+
+    if(buscarNomeABB(raiz, nomeBusca)) {
+        cout << "Item encontrado!" << endl;
+    } else {
+        cout << "Item não encontrado!" << endl;
+    }
+    
     esperarESC();
 }
 
-void listarItemA(){  //listar item em ordem alfabÃ©tica
+struct NoNome { // começo do codigo da arvore de busca binária
+    inserirObj item;
+    NoNome* esq;
+    NoNome* dir;
+};
 
+NoNome* inserirABBNome(NoNome* raizNome, inserirObj novo) {
+    if(raizNome == NULL){
+        NoNome* novoNo = new NoNome;
+        novoNo->item = novo;
+        novoNo->esq = NULL;
+        novoNo->dir = NULL;
+        return novoNo;
+    }
+
+    if(novo.nomeItem < raizNome->item.nomeItem)
+        raizNome->esq = inserirABBNome(raizNome->esq, novo);
+    else
+        raizNome->dir = inserirABBNome(raizNome->dir, novo);
+
+    return raizNome;
+}
+
+void emOrdemNome(NoNome* raizNome) {
+    if(raizNome != NULL) {
+        emOrdemNome(raizNome->esq);
+        cout << "Nome: " << raizNome->item.nomeItem 
+             << " | ID: " << raizNome->item.id 
+             << " | Dono: " << raizNome->item.nomeDono 
+             << " | Raridade: " << raizNome->item.raridade << endl;
+        emOrdemNome(raizNome->dir);
+    }
+}
+
+void listarItemA(){  //listagem de itens em ordem alfabética utilizando a ABB
 	limparTela();
-    cout << "Funcionalidade em construcao" << endl;
+    cout << "=== LISTAR ITENS (ORDEM ALFABETICA) ===" << endl;
+    
+    NoNome* raizNome = NULL;
+    list<inserirObj>::iterator it;
+	
+    for(it = itens.begin(); it != itens.end(); it++){
+        raizNome = inserirABBNome(raizNome, *it);
+    }
+    
+    if(raizNome == NULL) {
+        cout << "Nenhum item cadastrado." << endl;
+    } else {
+        emOrdemNome(raizNome);
+    }
+    
     esperarESC();
 }
 
@@ -231,3 +332,4 @@ int main (){
 
 	return 0;
 }
+
