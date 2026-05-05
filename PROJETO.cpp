@@ -1,7 +1,7 @@
 /*
 Mariana Bissaro Weiss, 2281
 Layla Victória Sousa Teles, 2426
-Livia oliveira santos, 2290
+Livia Oliveira Santos, 2290
 Maria Clara Freitas Soares, 712
 Miguel Borges Magalhães, 978
 Ruan Carlo Martins Garcia,487
@@ -17,7 +17,26 @@ Ruan Carlo Martins Garcia,487
 #include <conio.h>
 //bicliotecas para limpar o terminal e utilizar teclas especiais
 
+#define RESET     "\033[0m"
+#define VERDE     "\033[32m"
+#define VERDE_ESC "\033[92m"  // verde mais brilhante
+#define NEGRITO   "\033[1m"
+//variaveis para decoracao do menu
+
 using namespace std;
+
+void centralizar(string texto, bool quebrarLinha = true){ //funcao que centraliza o texto
+    int larguraTela = 80;
+    int espacos = (larguraTela - texto.length()) / 2;
+
+    for(int i = 0; i < espacos; i++)
+        cout << " ";
+
+    cout << texto;
+
+    if(quebrarLinha)
+        cout << endl;
+}
 
 //função para limpar a tela
 void limparTela(){
@@ -26,7 +45,14 @@ void limparTela(){
 
 // função para poder utilizar ESC
 void esperarESC(){
-    cout << "Pressione ESC para voltar ao menu..." << endl;
+    cout << endl;
+    cout << VERDE;
+
+    centralizar("+-------------------------------------+");
+    centralizar("Pressione ESC para voltar ao menu");
+    centralizar("+-------------------------------------+");
+
+    cout << RESET;
     char tecla;
     
     while(true){
@@ -38,12 +64,12 @@ void esperarESC(){
 // para adicionar um novo item
 struct inserirObj{
 	string nomeItem, nomeDono, propMagica;
-	int id, raridade; // raridade = numero de 0 a 100 onde 0=comum,100=rarÃ­ssimo
+	int id, raridade; // raridade = numero de 0 a 100 onde 0=comum,100=raríssimo
 };
 
 // Struct que representa uma aresta do grafo de similaridade
 struct Aresta{
-	int destino, peso; // nÃ£o precisa de origem pois o id do item ja nos dÃ¡ Ã  origem, destino = id do item relacionado, peso = valor de similaridade
+	int destino, peso; // não precisa de origem pois o id do item ja nos dá á origem, destino = id do item relacionado, peso = valor de similaridade
 };
 
 struct No{
@@ -52,6 +78,7 @@ struct No{
     No* dir;
 };
 
+list<Aresta> adj[1000];
 No* raiz = NULL;
 list<inserirObj> itens; // criei uma lista para adicionar os itens, cada posição da lista é um item
 
@@ -83,217 +110,224 @@ No* buscarABB(No* raiz, int id){
 }
 
 void inserirItem(){
-	
-	limparTela();
-    cout << "=== INSERIR ITEM ===" << endl;
-    
-	inserirObj novo;// criei uma variavel do tipo da struct
+    limparTela();
+    cout << VERDE << NEGRITO;
+    centralizar("+=====================================+");
+    centralizar("|          >> INSERIR ITEM <<         |");
+    centralizar("+=====================================+");
+    cout << RESET << VERDE << endl;
 
-	cout << "Nome do Item: " << endl;
-	cin.ignore();
-	getline(cin, novo.nomeItem);
+    inserirObj novo;
 
-	cout << "Nome do Dono: " << endl;
-	getline(cin, novo.nomeDono);
+    centralizar("Nome do Item: ", false);
+    cin.ignore();
+    getline(cin, novo.nomeItem);
 
-	cout << "Propriedade mÃ¡gica do item: " << endl;
-	getline(cin, novo.propMagica);
+    centralizar("Nome do Dono: ", false);
+    getline(cin, novo.nomeDono);
 
-	cout << "ID: " << endl;
-	cin >> novo.id;
+    centralizar("Propriedade magica do item: ", false);
+    getline(cin, novo.propMagica);
 
-	cout << "Raridade(0 a 100): " << endl;
-	cin >> novo.raridade;
+    centralizar("ID: ", false);
+    cin >> novo.id;
 
-	itens.push_back(novo);// adicionei na minha lista de itens o meu novo item, eu adiciono o item no final da lista
-	raiz = inserirABB(raiz, novo);
+    centralizar("Raridade (0 a 100): ", false);
+    cin >> novo.raridade;
 
-	cout << "Item adicionado!" << endl;
-	
-	esperarESC();
+    itens.push_back(novo);
+    raiz = inserirABB(raiz, novo);
+
+	cout << VERDE << NEGRITO;
+    centralizar("+-------------------------------------+");
+    centralizar("|        >> Item adicionado! <<       |");
+    centralizar("+-------------------------------------+");
+    cout << RESET << endl;
+
+    esperarESC();
 }
 
-list<Aresta> adj[1000]; // lista de adjacÃªncia do grafo (Ã­ndice = id do item)
 void cadastrarSimilaridades(){
-	
-	limparTela();
-    cout << "=== CADASTRAR SIMILARIDADE ===" << endl;
-    
-	int id1, id2, s;
-	cout << "Digite o ID do item 1: " << endl;
-	cin >> id1;
-	cout << "Digite o ID do item 2: " << endl;
-	cin >> id2;
-	cout << "Similaridade entre eles: " << endl;
-	cin >> s;
+    limparTela();
+    cout << VERDE << NEGRITO;
+    centralizar("+=====================================+");
+    centralizar("|     >> CADASTRAR SIMILARIDADE <<    |");
+    centralizar("+=====================================+");
+    cout << RESET << VERDE << endl;
 
-	adj[id1].push_back( {id2, s}); // // aresta de id1 ? id2 com peso s
-	adj[id2].push_back( {id1, s}); // se for um grafo nÃ£o orientado
+    int id1, id2, s;
+    centralizar("ID do item 1: ", false);
+    cin >> id1;
+    centralizar("ID do item 2: ", false);
+    cin >> id2;
+    centralizar("Similaridade entre eles: ", false);
+    cin >> s;
 
-	cout << "Similaridade cadastrada!" << endl;
-	
-	esperarESC();
+    adj[id1].push_back({id2, s});
+    adj[id2].push_back({id1, s});
+
+    cout << endl;
+    centralizar("+-------------------------------------+");
+    centralizar("|    >> Similaridade cadastrada! <<   |");
+    centralizar("+-------------------------------------+");
+    cout << RESET << endl;
+
+    esperarESC();
 }
 
 void buscarItens(){
-	limparTela();
-	cout << "=== BUSCAR ITENS ===" << endl;
+    limparTela();
+    cout << VERDE << NEGRITO;
+    centralizar("+=====================================+");
+    centralizar("|     >> BUSCAR ITENS SIMILARES <<    |");
+    centralizar("+=====================================+");
+    cout << RESET << VERDE << endl;
 
-	int idC;
-	double X;
-	string jogadorJ;
-	list<Aresta>::iterator it;
-	list<inserirObj>::iterator it2;
+    int idC;
+    double X;
+    string jogadorJ;
+    list<Aresta>::iterator it;
+    list<inserirObj>::iterator it2;
 
-	cout << "Digite o código do item:" << endl;
-	cin >> idC;
+    centralizar("Codigo do item: ", false);
+    cin >> idC;
+    centralizar("Similaridade minima: ", false);
+    cin >> X;
+    centralizar("Nome do jogador: ", false);
+    cin >> jogadorJ;
 
-	cout << "Digite o valor minimo de similaridade:" << endl;
-	cin >> X;
+    cout << endl;
+    centralizar("+-------------------------------------+");
+    centralizar("|          >> RESULTADOS <<           |");
+    centralizar("+-------------------------------------+");
 
-	cout << "Digite o nome do jogador:" << endl;
-	cin >> jogadorJ;
-
-	bool encontrou = false;
-	for(it = adj[idC].begin(); it != adj[idC].end(); it++){ // aqui ele percorre todos os vizinhos do item C,  porque na lista de adjacencia Ã© armazenado os vizinhos de cada id
-		if(it->peso > X){ // verifica se a similaridade Ã© maior que X
-			for(it2 = itens.begin(); it2 != itens.end(); it2++){ //aqui ele percorre a lista com os itens
-				if(it2->id == it->destino && it2->nomeDono != jogadorJ){ //aqui ele verifica se o id do item Ã© igual o id do item que eu quero verificar
-					cout << "ID: " << it2->id;
-					cout << " | Nome: " << it2->nomeItem;
-					cout << " | Dono: " << it2->nomeDono;
-					cout << " | Similaridade: " << it->peso << endl;
-					encontrou = true;
-				}
-			}
-		}
-	}
-
-	if(!encontrou)
-		cout<< "Item nao encontrado!" << endl;
-
-	esperarESC();
-}
-
-bool buscarNomeABB(No* noAtual, string nomeBusca) { // funçao auxiliar para buscar por nome
-    if (noAtual == NULL) return false;
-    if (noAtual->item.nomeItem == nomeBusca) return true;
-    
-    return buscarNomeABB(noAtual->esq, nomeBusca) || buscarNomeABB(noAtual->dir, nomeBusca);
-}
-
-void verificarItem(){ // verificação para ver se o item existe pelo nome
-	limparTela();
-    cout << "=== VERIFICAR EXISTENCIA DE ITEM ===" << endl;
-    
-    string nomeBusca;
-    cout << "Digite o nome do item que deseja buscar: " << endl;
-    cin.ignore();
-    getline(cin, nomeBusca);
-
-    if(buscarNomeABB(raiz, nomeBusca)) {
-        cout << "Item encontrado!" << endl;
-    } else {
-        cout << "Item não encontrado!" << endl;
+    bool encontrou = false;
+    for(it = adj[idC].begin(); it != adj[idC].end(); it++){
+        if(it->peso > X){
+            for(it2 = itens.begin(); it2 != itens.end(); it2++){
+                if(it2->id == it->destino && it2->nomeDono != jogadorJ){
+                    cout << "| ID: "         << it2->id       << endl;
+                    cout << "| Nome: "       << it2->nomeItem << endl;
+                    cout << "| Dono: "       << it2->nomeDono << endl;
+                    cout << "| Similaridade: " << it->peso   << endl;
+                    centralizar("+-------------------------------------+");
+                    encontrou = true;
+                }
+            }
+        }
     }
-    
+
+    if(!encontrou)
+        centralizar("| >> Nenhum item encontrado! <<       |");
+
+    cout << RESET << endl;
     esperarESC();
 }
 
-struct NoNome { // começo do codigo da arvore de busca binária
-    inserirObj item;
-    NoNome* esq;
-    NoNome* dir;
-};
-
-NoNome* inserirABBNome(NoNome* raizNome, inserirObj novo) {
-    if(raizNome == NULL){
-        NoNome* novoNo = new NoNome;
-        novoNo->item = novo;
-        novoNo->esq = NULL;
-        novoNo->dir = NULL;
-        return novoNo;
-    }
-
-    if(novo.nomeItem < raizNome->item.nomeItem)
-        raizNome->esq = inserirABBNome(raizNome->esq, novo);
-    else
-        raizNome->dir = inserirABBNome(raizNome->dir, novo);
-
-    return raizNome;
-}
-
-void emOrdemNome(NoNome* raizNome) {
-    if(raizNome != NULL) {
-        emOrdemNome(raizNome->esq);
-        cout << "Nome: " << raizNome->item.nomeItem 
-             << " | ID: " << raizNome->item.id 
-             << " | Dono: " << raizNome->item.nomeDono 
-             << " | Raridade: " << raizNome->item.raridade << endl;
-        emOrdemNome(raizNome->dir);
-    }
-}
-
-void listarItemA(){  //listagem de itens em ordem alfabética utilizando a ABB
-	limparTela();
-    cout << "=== LISTAR ITENS (ORDEM ALFABETICA) ===" << endl;
-    
-    NoNome* raizNome = NULL;
-    list<inserirObj>::iterator it;
-	
-    for(it = itens.begin(); it != itens.end(); it++){
-        raizNome = inserirABBNome(raizNome, *it);
-    }
-    
-    if(raizNome == NULL) {
-        cout << "Nenhum item cadastrado." << endl;
-    } else {
-        emOrdemNome(raizNome);
-    }
-    
+void verificarItem(){
+    limparTela();
+    cout << VERDE << NEGRITO;
+    centralizar("+=====================================+");
+    centralizar("|        >> VERIFICAR ITEM <<         |");
+    centralizar("+=====================================+");
+    cout << RESET << VERDE;
+    centralizar("| Funcionalidade em construcao...     |");
+    centralizar("+-------------------------------------+");
+    cout << RESET << endl;
     esperarESC();
 }
 
-void listarItemR(){  //listar itens em ordem decrescente de raridade
-	limparTela();
-    cout << "Funcionalidade em construcao" << endl;
+void listarItemA(){ //listar item em ordem alfabética
+    limparTela();
+    cout << VERDE << NEGRITO;
+    centralizar("+=====================================+");
+    centralizar("|      >> LISTAR (ALFABETICA) <<      |");
+    centralizar("+=====================================+");
+    cout << RESET << VERDE;
+    centralizar("| Funcionalidade em construcao...     |");
+    centralizar("+-------------------------------------+");
+    cout << RESET << endl;
+    esperarESC();
+}
+
+void listarItemR(){ //listar itens em ordem decrescente de raridade
+    limparTela();
+    cout << VERDE << NEGRITO;
+    centralizar("+=====================================+");
+    centralizar("|        >> LISTAR (RARIDADE) <<      |");
+    centralizar("+=====================================+");
+    cout << RESET << VERDE;
+    centralizar("| Funcionalidade em construcao...     |");
+    centralizar("+-------------------------------------+");
+    cout << RESET << endl;
     esperarESC();
 }
 
 void contarItens(){
-	limparTela();
-    cout << "Funcionalidade em construcao" << endl;
+    limparTela();
+    cout << VERDE << NEGRITO;
+    centralizar("+=====================================+");
+    centralizar("|     >> CONTAR POR PROPRIEDADE <<    |");
+    centralizar("+=====================================+");
+    cout << RESET << VERDE;
+    centralizar("| Funcionalidade em construcao...     |");
+    centralizar("+-------------------------------------+");
+    cout << RESET << endl;
     esperarESC();
 }
 
-void remover(){  //remover itens menos raros
-	limparTela();
-    cout << "Funcionalidade em construcao" << endl;
+void remover(){
+    limparTela();
+    cout << VERDE << NEGRITO;
+    centralizar("+=====================================+");
+    centralizar("|      >> REMOVER MENOS RAROS <<      |");
+    centralizar("+=====================================+");
+    cout << RESET << VERDE;
+    centralizar("| Funcionalidade em construcao...     |");
+    centralizar("+-------------------------------------+");
+    cout << RESET << endl;
     esperarESC();
+}
+
+
+// cabecalho estilizado
+void cabecalhoDecorado() {
+    cout << VERDE << NEGRITO;
+    centralizar("+=====================================+");
+    centralizar("|      ***  BOLSA DEVORADORA  ***     |");
+    centralizar("+=====================================+");
+    cout << RESET << endl;
 }
 
 
 int main (){
 
 	setlocale(LC_ALL, "Portuguese");
-//funÃ§Ã£o da biblioteca locale
+	//função da biblioteca locale
 
 	int opcao;
 	do{
 		limparTela();
 		
-		cout << "================== BOLSA DEVORADORA =================" << endl;
-		cout << "| 1. Inserir item                                   |" << endl;
-		cout << "| 2. Cadastrar similaridade entre itens;            |" << endl;
-		cout << "| 3. Buscar itens similares;                        |" << endl;
-		cout << "| 4. Verificar a existencia de um item;             |" << endl;
-		cout << "| 5. Listar itens (ordem alfabetica de nome);       |" << endl;
-		cout << "| 6. Listar itens (ordem decrescente de raridade)   |" << endl;
-		cout << "| 7. Contar itens com mesma propriedade magica;     |" << endl;
-		cout << "| 8. Remover itens menos raros;                     |" << endl;
-		cout << "| 9. Sair                                           |" << endl;
-		cout << "=====================================================" << endl;
-		cout << "Escolha uma opcao: " << endl;
+		cabecalhoDecorado();
+
+		cout << VERDE;
+    	centralizar("+-------------------------------------+");
+    	centralizar("|            -- ACOES --              |");
+    	centralizar("+-------------------------------------+");
+    	centralizar("¦  [1] >> Inserir item                ¦");
+    	centralizar("¦  [2] >> Cadastrar similaridade      ¦");
+    	centralizar("¦  [3] >> Buscar itens similares      ¦");
+    	centralizar("¦  [4] >> Verificar existencia        ¦");
+    	centralizar("¦  [5] >> Listar (alfabetica)         ¦");
+    	centralizar("¦  [6] >> Listar (raridade)           ¦");
+    	centralizar("¦  [7] >> Contar por propriedade      ¦");
+    	centralizar("¦  [8] >> Remover menos raros         ¦");
+    	centralizar("¦  [9] >> Sair                        ¦");
+    	centralizar("+-------------------------------------+");
+    	cout << RESET << endl;
+
+		centralizar("Escolha uma opcao: ", false);
 		cin >> opcao;
 
 
