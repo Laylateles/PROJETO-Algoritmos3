@@ -1,7 +1,7 @@
 /*
 Mariana Bissaro Weiss, 2281
 Layla Victória Sousa Teles, 2426
-livia oliveira santos, 2290
+Livia oliveira santos, 2290
 Maria Clara Freitas Soares, 712
 Miguel Borges Magalhães, 978
 Ruan Carlo Martins Garcia,487
@@ -175,17 +175,82 @@ void buscarItens(){
 	esperarESC();
 }
 
-void verificarItem(){
-	
+bool buscarNomeABB(No* noAtual, string nomeBusca) { // funçao auxiliar para buscar por nome
+    if (noAtual == NULL) return false;
+    if (noAtual->item.nomeItem == nomeBusca) return true;
+    
+    return buscarNomeABB(noAtual->esq, nomeBusca) || buscarNomeABB(noAtual->dir, nomeBusca);
+}
+
+void verificarItem(){ // verificação para ver se o item existe pelo nome
 	limparTela();
-    cout << "Funcionalidade em construcao" << endl;
+    cout << "=== VERIFICAR EXISTENCIA DE ITEM ===" << endl;
+    
+    string nomeBusca;
+    cout << "Digite o nome do item que deseja buscar: " << endl;
+    cin.ignore();
+    getline(cin, nomeBusca);
+
+    if(buscarNomeABB(raiz, nomeBusca)) {
+        cout << "Item encontrado!" << endl;
+    } else {
+        cout << "Item não encontrado!" << endl;
+    }
+    
     esperarESC();
 }
 
-void listarItemA(){  //listar item em ordem alfabÃ©tica
+struct NoNome { // começo do codigo da arvore de busca binária
+    inserirObj item;
+    NoNome* esq;
+    NoNome* dir;
+};
 
+NoNome* inserirABBNome(NoNome* raizNome, inserirObj novo) {
+    if(raizNome == NULL){
+        NoNome* novoNo = new NoNome;
+        novoNo->item = novo;
+        novoNo->esq = NULL;
+        novoNo->dir = NULL;
+        return novoNo;
+    }
+
+    if(novo.nomeItem < raizNome->item.nomeItem)
+        raizNome->esq = inserirABBNome(raizNome->esq, novo);
+    else
+        raizNome->dir = inserirABBNome(raizNome->dir, novo);
+
+    return raizNome;
+}
+
+void emOrdemNome(NoNome* raizNome) {
+    if(raizNome != NULL) {
+        emOrdemNome(raizNome->esq);
+        cout << "Nome: " << raizNome->item.nomeItem 
+             << " | ID: " << raizNome->item.id 
+             << " | Dono: " << raizNome->item.nomeDono 
+             << " | Raridade: " << raizNome->item.raridade << endl;
+        emOrdemNome(raizNome->dir);
+    }
+}
+
+void listarItemA(){  //listagem de itens em ordem alfabética utilizando a ABB
 	limparTela();
-    cout << "Funcionalidade em construcao" << endl;
+    cout << "=== LISTAR ITENS (ORDEM ALFABETICA) ===" << endl;
+    
+    NoNome* raizNome = NULL;
+    list<inserirObj>::iterator it;
+	
+    for(it = itens.begin(); it != itens.end(); it++){
+        raizNome = inserirABBNome(raizNome, *it);
+    }
+    
+    if(raizNome == NULL) {
+        cout << "Nenhum item cadastrado." << endl;
+    } else {
+        emOrdemNome(raizNome);
+    }
+    
     esperarESC();
 }
 
