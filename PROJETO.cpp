@@ -72,43 +72,31 @@ struct Aresta{
 	int destino, peso; // não precisa de origem pois o id do item ja nos dá á origem, destino = id do item relacionado, peso = valor de similaridade
 };
 
-struct No{
-    inserirObj item;
-    No* esq;
-    No* dir;
+struct Node{// struct arvore binaria
+    inserirObj item;//herda as variaveis da struct inserirObj
+    Node * esq;
+    Node * dir;
 };
 
 list<Aresta> adj[1000];
-No* raiz = NULL;
+Node * raiz = NULL;// nó raiz começa null
 list<inserirObj> itens; // criei uma lista para adicionar os itens, cada posição da lista é um item
 
-No* inserirABB(No* raiz, inserirObj novo){
+void inserirABB(Node *& raiz, inserirObj novo){// ja estou inserindo na arvore pelo nome
     if(raiz == NULL){
-        No* novoNo = new No;
-        novoNo->item = novo;
-        novoNo->esq = NULL;
-        novoNo->dir = NULL;
-        return novoNo;
-    }
-
-    if(novo.id < raiz->item.id)
-        raiz->esq = inserirABB(raiz->esq, novo);
-    else if(novo.id > raiz->item.id)
-        raiz->dir = inserirABB(raiz->dir, novo);
-
-    return raiz;
+        raiz = new Node;
+        raiz->item = novo;
+        raiz->esq = NULL;
+        raiz->dir = NULL;
+    }else{
+    	if(novo.nomeItem < raiz->item.nomeItem){
+        	inserirABB(raiz->esq, novo);
+		}else if(novo.nomeItem >= raiz->item.nomeItem){
+        	inserirABB(raiz->dir, novo);
+		}
+	}
 }
-
-No* buscarABB(No* raiz, int id){
-    if(raiz == NULL || raiz->item.id == id)
-        return raiz;
-
-    if(id < raiz->item.id)
-        return buscarABB(raiz->esq, id);
-    else
-        return buscarABB(raiz->dir, id);
-}
-
+	
 void inserirItem(){
     limparTela();
     cout << VERDE << NEGRITO;
@@ -136,7 +124,7 @@ void inserirItem(){
     cin >> novo.raridade;
 
     itens.push_back(novo);
-    raiz = inserirABB(raiz, novo);
+    inserirABB(raiz, novo);
 
 	cout << VERDE << NEGRITO;
     centralizar("+-------------------------------------+");
@@ -223,13 +211,21 @@ void buscarItens(){
     cout << RESET << endl;
     esperarESC();
 }
-
-bool buscarNomeABB(No* noAtual, string nomeBusca) { // funçao auxiliar para buscar por nome
-    if (noAtual == NULL) return false;
-    if (noAtual->item.nomeItem == nomeBusca) return true;
-    
-    return buscarNomeABB(noAtual->esq, nomeBusca) || buscarNomeABB(noAtual->dir, nomeBusca);
+Node * buscar(Node * raiz, string nome){// retorna um ponteiro para o nó encontrado ou retorna null
+	if(raiz == NULL) // quer dizer que não encontrou o nó
+		return NULL;
+	if(nome == raiz->item.nomeItem){ // se o nó que eu to encontrando for igual ao nó que o ponteiro ja esta apontando, retorna ele
+		return raiz;
+	} else {
+		if(nome > raiz->item.nomeItem){// se o nó que eu to procurando é mais que o nó que o ponteiro esta apontando
+			return buscar(raiz->dir, nome);// eu aponto para a direita deste nó
+		} else if(nome < raiz->item.nomeItem){// se for menor 
+			return buscar(raiz->esq, nome);// aponto o ponteiro para a esquerda deste nó
+		}
+	}
+	return NULL;
 }
+
 
 void verificarItem(){ //verificar se o item existe
     limparTela();
@@ -245,8 +241,8 @@ void verificarItem(){ //verificar se o item existe
     getline(cin, nomeBusca);
 
     cout << endl;
-
-    if(buscarNomeABB(raiz, nomeBusca)) {
+	Node * encontrado = buscar(raiz,nomeBusca);
+    if(encontrado != NULL) {
         centralizar("+-------------------------------------+");
         centralizar("|         >> ITEM ENCONTRADO! <<      |");
         centralizar("+-------------------------------------+");
@@ -260,39 +256,17 @@ void verificarItem(){ //verificar se o item existe
     esperarESC();
 }
 
-struct NoNome { // começo do codigo da arvore de busca binária
-    inserirObj item;
-    NoNome* esq;
-    NoNome* dir;
-};
-
-NoNome* inserirABBNome(NoNome* raizNome, inserirObj novo) {
-    if(raizNome == NULL){
-        NoNome* novoNo = new NoNome;
-        novoNo->item = novo;
-        novoNo->esq = NULL;
-        novoNo->dir = NULL;
-        return novoNo;
-    }
-	
-    if(novo.nomeItem < raizNome->item.nomeItem)
-        raizNome->esq = inserirABBNome(raizNome->esq, novo);
-    else
-        raizNome->dir = inserirABBNome(raizNome->dir, novo);
-
-    return raizNome;
+void mostrarArvore(Node * raiz){// mostra a árvore inteira 
+	if(raiz->esq != NULL)// se tiver nó a esquerda
+		mostrarArvore(raiz->esq);// mostro o nó da esquerda
+		cout << "Nome: " << raiz->item.nomeItem 
+             << " | ID: " << raiz->item.id 
+             << " | Dono: " << raiz->item.nomeDono 
+             << " | Raridade: " << raiz->item.raridade << endl;
+	if(raiz->dir != NULL) // se tiver nó na direita
+		mostrarArvore(raiz->dir);// mostro os valores do nó a direita
 }
 
-void emOrdemNome(NoNome* raizNome) {
-    if(raizNome != NULL) {
-        emOrdemNome(raizNome->esq);
-        cout << "Nome: " << raizNome->item.nomeItem 
-             << " | ID: " << raizNome->item.id 
-             << " | Dono: " << raizNome->item.nomeDono 
-             << " | Raridade: " << raizNome->item.raridade << endl;
-        emOrdemNome(raizNome->dir);
-    }
-}
 
 void listarItemA(){ //listar item em ordem alfabética
     limparTela();
@@ -302,25 +276,7 @@ void listarItemA(){ //listar item em ordem alfabética
     centralizar("+=====================================+");
     cout << RESET << VERDE << endl;
     
-    NoNome* raizNome = NULL;
-    list<inserirObj>::iterator it;
-	
-    for(it = itens.begin(); it != itens.end(); it++){
-        raizNome = inserirABBNome(raizNome, *it);
-    }
-    
-    if(raizNome == NULL) {
-        centralizar("+-------------------------------------+");
-        centralizar("|      >> NENHUM ITEM CADASTRADO <<   |");
-        centralizar("+-------------------------------------+");
-    } else {
-        centralizar("+-------------------------------------+");
-        centralizar("|             >> LISTA <<             |");
-        centralizar("+-------------------------------------+");
-        cout << endl;
-        emOrdemNome(raizNome);
-    }
-
+    mostrarArvore(raiz);
     cout << RESET << endl;
     esperarESC();
 }
