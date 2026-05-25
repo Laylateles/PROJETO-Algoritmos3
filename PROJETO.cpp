@@ -96,6 +96,43 @@ void inserirABB(Node *& raiz, inserirObj novo){// ja estou inserindo na arvore p
 		}
 	}
 }
+
+void inserirABBRaridade(Node *& raizR, inserirObj novo){
+    if(raizR == NULL){
+        raizR = new Node;
+        raizR->item = novo;
+        raizR->esq = NULL;
+        raizR->dir = NULL;
+    }else{
+        if(novo.raridade < raizR->item.raridade){
+            inserirABBRaridade(raizR->esq, novo);
+        }else{
+            inserirABBRaridade(raizR->dir, novo);
+        }
+    }
+} // função de inserir arvore binaria diretamente adaptada do material de codigos nosso sobre ABB
+
+void mostrarRaridadeDecrescente(Node * raizR){
+    if(raizR != NULL){
+        mostrarRaridadeDecrescente(raizR->dir);
+
+        cout << "Nome: " << raizR->item.nomeItem
+             << " | ID: " << raizR->item.id
+             << " | Dono: " << raizR->item.nomeDono
+             << " | Raridade: " << raizR->item.raridade << endl;
+
+        mostrarRaridadeDecrescente(raizR->esq);
+    }
+} // função mostrarArvore adaptada
+
+void destruirArvore(Node *& raiz){
+    if(raiz != NULL){
+        destruirArvore(raiz->esq);
+        destruirArvore(raiz->dir);
+        delete raiz;
+        raiz = NULL;
+    }
+} // função destruct adaptada
 	
 void inserirItem(){
     limparTela();
@@ -287,9 +324,23 @@ void listarItemR(){ //listar itens em ordem decrescente de raridade
     centralizar("+=====================================+");
     centralizar("|        >> LISTAR (RARIDADE) <<      |");
     centralizar("+=====================================+");
-    cout << RESET << VERDE;
-    centralizar("| Funcionalidade em construcao...     |");
-    centralizar("+-------------------------------------+");
+    cout << RESET << VERDE << endl;
+
+    Node * raizR = NULL;
+
+    list<inserirObj>::iterator it;
+    for(it = itens.begin(); it != itens.end(); it++){
+        inserirABBRaridade(raizR, *it);
+    }
+
+    if(raizR == NULL){
+        centralizar("|        >> Nenhum item cadastrado! <<|");
+    }else{
+        mostrarRaridadeDecrescente(raizR);
+    }
+
+    destruirArvore(raizR);
+
     cout << RESET << endl;
     esperarESC();
 }
