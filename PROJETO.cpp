@@ -346,14 +346,32 @@ void listarItemR(){ //listar itens em ordem decrescente de raridade
 }
 
 void contarItens(){
+
     limparTela();
     cout << VERDE << NEGRITO;
     centralizar("+=====================================+");
     centralizar("|     >> CONTAR POR PROPRIEDADE <<    |");
     centralizar("+=====================================+");
-    cout << RESET << VERDE;
-    centralizar("| Funcionalidade em construcao...     |");
-    centralizar("+-------------------------------------+");
+    cout << RESET << VERDE << endl;
+
+    string prop;
+    int cont = 0;
+
+    centralizar("Digite a propriedade magica: ", false);
+    cin.ignore();
+    getline(cin, prop);
+
+    list<inserirObj>::iterator it;
+    for(it = itens.begin(); it != itens.end(); it++){
+		
+        if(it->propMagica == prop){ // aqui faz a verificação da propriedade
+            cont++;
+        }
+    }
+
+    cout << endl;
+    cout << "Quantidade de itens com essa propriedade: " << cont << endl;
+
     cout << RESET << endl;
     esperarESC();
 }
