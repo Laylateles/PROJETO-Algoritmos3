@@ -299,6 +299,7 @@ void mostrarArvore(Node * raiz){// mostra a árvore inteira
 		cout << "Nome: " << raiz->item.nomeItem 
              << " | ID: " << raiz->item.id 
              << " | Dono: " << raiz->item.nomeDono 
+			 << " | Propriedade Magica: " << raiz->item.propMagica 
              << " | Raridade: " << raiz->item.raridade << endl;
 	if(raiz->dir != NULL) // se tiver nó na direita
 		mostrarArvore(raiz->dir);// mostro os valores do nó a direita
