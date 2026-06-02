@@ -134,6 +134,16 @@ void destruirArvore(Node *& raiz){
     }
 } // função destruct adaptada
 	
+void reconstruirArvore(){
+    destruirArvore(raiz); // apaga toda a arvore
+
+    list<inserirObj>::iterator it; // percorre a lista de itens restantes
+    for(it = itens.begin(); it != itens.end(); it++){
+    	
+        inserirABB(raiz, *it); // insere denovo cada item na arvore
+    }
+}
+
 void inserirItem(){
     limparTela();
     cout << VERDE << NEGRITO;
@@ -383,9 +393,30 @@ void remover(){
     centralizar("+=====================================+");
     centralizar("|      >> REMOVER MENOS RAROS <<      |");
     centralizar("+=====================================+");
-    cout << RESET << VERDE;
-    centralizar("| Funcionalidade em construcao...     |");
-    centralizar("+-------------------------------------+");
+    cout << RESET << VERDE << endl;
+
+    int R;
+    centralizar("Remover itens com raridade menor que: ", false);
+    cin >> R;
+
+    int removidos = 0;
+
+    list<inserirObj>::iterator it = itens.begin(); // iterador q percorre a lista de itens
+
+    while(it != itens.end()){
+        if(it->raridade < R){  // verificação de raridade
+            it = itens.erase(it);
+            removidos++;
+        } else {
+            it++;
+        }
+    }
+
+    reconstruirArvore(); // atualiza a arvore binaria
+
+    cout << endl;
+    cout << "Quantidade de itens removidos: " << removidos << endl;
+
     cout << RESET << endl;
     esperarESC();
 }
@@ -467,4 +498,4 @@ int main (){
 
 
 	return 0;
-}
+} 
