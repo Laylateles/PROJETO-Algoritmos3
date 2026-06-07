@@ -61,10 +61,15 @@ void esperarESC(){
     }
 }
 
+struct Ponto{//para o algoritmo geometrico
+    int x, y;
+};
 // para adicionar um novo item
 struct inserirObj{
 	string nomeItem, nomeDono, propMagica;
 	int id, raridade; // raridade = numero de 0 a 100 onde 0=comum,100=raríssimo
+    int qtdVertices;
+    Ponto contorno[10];//assumindo que um item terá no maximo 20 vertices
 };
 
 // Struct que representa uma aresta do grafo de similaridade
@@ -78,11 +83,30 @@ struct Node{// struct arvore binaria
     Node * dir;
 };
 
+const int ABERTURA_BOLSA = 15;
 list<Aresta> adj[1000];
 Node * raiz = NULL;// nó raiz começa null
+Node * raizR = NULL;//nó raiz de raridade
 list<inserirObj> itens; // criei uma lista para adicionar os itens, cada posição da lista é um item
+//-----------------------------------------------------------------------------------------------------------------
+int larguraPoligono(inserirObj item){//para calcular a largura do item
+    int menorX = item.contorno[0].x;
+	int maiorX = item.contorno[0].x;
+    for(int i = 1; i < item.qtdVertices; i++){
+        if(menorX > item.contorno[i].x){
+            menorX = item.contorno[i].x;
+		}
+        if(item.contorno[i].x > maiorX){
+            maiorX = item.contorno[i].x;
+		}
+    }
+    return maiorX - menorX;//retorna a largura do item
+}
 
-void inserirABB(Node *& raiz, inserirObj novo){// ja estou inserindo na arvore pelo nome
+
+
+//-----------------------------------------------------------------------------------------------------------
+void inserirABB(Node *& raiz, inserirObj novo){//arvore binaria pelo nome do objeto
     if(raiz == NULL){
         raiz = new Node;
         raiz->item = novo;
@@ -96,8 +120,8 @@ void inserirABB(Node *& raiz, inserirObj novo){// ja estou inserindo na arvore p
 		}
 	}
 }
-
-void inserirABBRaridade(Node *& raizR, inserirObj novo){
+//-------------------------------------------------------------------------------------------------------------
+void inserirABBRaridade(Node *& raizR, inserirObj novo){//arvore binaria pela raridade do objeto
     if(raizR == NULL){
         raizR = new Node;
         raizR->item = novo;
@@ -110,41 +134,26 @@ void inserirABBRaridade(Node *& raizR, inserirObj novo){
             inserirABBRaridade(raizR->dir, novo);
         }
     }
-} // função de inserir arvore binaria diretamente adaptada do material de codigos nosso sobre ABB
+} 
+//-------------------------------------------------------------------------------------------------------------
+void mostrarRaridadeDecrescente(Node * raizR){//mostra os objetos pela raridade em ordem decrescente
+    if(raizR == NULL)
+    	return;
 
-void mostrarRaridadeDecrescente(Node * raizR){
-    if(raizR != NULL){
-        mostrarRaridadeDecrescente(raizR->dir);
+    mostrarRaridadeDecrescente(raizR->dir);
 
-        cout << "Nome: " << raizR->item.nomeItem
-             << " | ID: " << raizR->item.id
-             << " | Dono: " << raizR->item.nomeDono
-             << " | Raridade: " << raizR->item.raridade << endl;
+    cout << "Nome: " << raizR->item.nomeItem
+         << " | ID: " << raizR->item.id
+         << " | Dono: " << raizR->item.nomeDono
+         << " | Propriedade: " << raizR->item.propMagica
+         << " | Raridade: " << raizR->item.raridade
+         << endl;
+         
+    mostrarRaridadeDecrescente(raizR->esq);
+} 
 
-        mostrarRaridadeDecrescente(raizR->esq);
-    }
-} // função mostrarArvore adaptada
-
-void destruirArvore(Node *& raiz){
-    if(raiz != NULL){
-        destruirArvore(raiz->esq);
-        destruirArvore(raiz->dir);
-        delete raiz;
-        raiz = NULL;
-    }
-} // função destruct adaptada
-	
-void reconstruirArvore(){
-    destruirArvore(raiz); // apaga toda a arvore
-
-    list<inserirObj>::iterator it; // percorre a lista de itens restantes
-    for(it = itens.begin(); it != itens.end(); it++){
-    	
-        inserirABB(raiz, *it); // insere denovo cada item na arvore
-    }
-}
-
-void inserirItem(){
+//------------------------------------------------------------------------------------------------------------
+void inserirItem(){//insere um item na arvore binaria
     limparTela();
     cout << VERDE << NEGRITO;
     centralizar("+=====================================+");
@@ -169,9 +178,57 @@ void inserirItem(){
 
     centralizar("Raridade (0 a 100): ", false);
     cin >> novo.raridade;
+	
+	centralizar("Quantidade de vertices do poligono: ", false);
+	cin >> novo.qtdVertices;
+	if(novo.qtdVertices < 3){
+	    cout << endl;
+	
+	    centralizar("+-------------------------------------+");
+	    centralizar("| UM POLIGONO PRECISA DE 3 PONTOS!    |");
+	    centralizar("+-------------------------------------+");
+	
+	    esperarESC();
+	    return;
+	}
+	if(novo.qtdVertices > 10){
+	    cout << endl;
+	
+	    centralizar("+-------------------------------------+");
+	    centralizar("| MAXIMO DE 10 VERTICES!              |");
+	    centralizar("+-------------------------------------+");
+	
+	    esperarESC();
+	    return;
+	}
+	
+	for(int i = 0; i < novo.qtdVertices; i++){
+	    cout << endl;
+	    
+	    cout << "Vertice " << i + 1 << endl;
+	
+	    cout << "X: ";
+	    cin >> novo.contorno[i].x;
+	
+	    cout << "Y: ";
+	    cin >> novo.contorno[i].y;
+	}
+	int largura = larguraPoligono(novo);
 
+	if(largura > ABERTURA_BOLSA){
+	
+	    cout << endl;
+	
+	    centralizar("+-------------------------------------+");
+	    centralizar("| ITEM NAO PASSA PELA ABERTURA!       |");
+	    centralizar("+-------------------------------------+");
+	
+	    esperarESC();
+	    return;
+	}
     itens.push_back(novo);
-    inserirABB(raiz, novo);
+    inserirABB(raiz, novo);//insere na arvore binaria pelo nome
+    inserirABBRaridade(raizR, novo);//insere na arvore binaria pela raridade
 
 	cout << VERDE << NEGRITO;
     centralizar("+-------------------------------------+");
@@ -181,8 +238,8 @@ void inserirItem(){
 
     esperarESC();
 }
-
-void cadastrarSimilaridades(){
+//--------------------------------------------------------------------------------------------------
+void cadastrarSimilaridades(){//cadastra as similaridade entre os itens
     limparTela();
     cout << VERDE << NEGRITO;
     centralizar("+=====================================+");
@@ -209,8 +266,8 @@ void cadastrarSimilaridades(){
 
     esperarESC();
 }
-
-void buscarItens(){
+//------------------------------------------------------------------------------------------------------
+void buscarItens(){//busca os itens pela sua similaridade
     limparTela();
     cout << VERDE << NEGRITO;
     centralizar("+=====================================+");
@@ -258,7 +315,8 @@ void buscarItens(){
     cout << RESET << endl;
     esperarESC();
 }
-Node * buscar(Node * raiz, string nome){// retorna um ponteiro para o nó encontrado ou retorna null
+//------------------------------------------------------------------------------------------------------------
+Node * buscar(Node * raiz, string nome){// busca o item pelo nome dele
 	if(raiz == NULL) // quer dizer que não encontrou o nó
 		return NULL;
 	if(nome == raiz->item.nomeItem){ // se o nó que eu to encontrando for igual ao nó que o ponteiro ja esta apontando, retorna ele
@@ -273,7 +331,7 @@ Node * buscar(Node * raiz, string nome){// retorna um ponteiro para o nó encont
 	return NULL;
 }
 
-
+//--------------------------------------------------------------------------------------------------------
 void verificarItem(){ //verificar se o item existe
     limparTela();
     cout << VERDE << NEGRITO;
@@ -302,8 +360,8 @@ void verificarItem(){ //verificar se o item existe
     cout << RESET << endl;
     esperarESC();
 }
-
-void mostrarArvore(Node * raiz){// mostra a árvore inteira 
+//--------------------------------------------------------------------------------------------------------------
+void mostrarArvore(Node * raiz){// mostra a árvore inteira -- pelo nome do item
 	if(raiz->esq != NULL)// se tiver nó a esquerda
 		mostrarArvore(raiz->esq);// mostro o nó da esquerda
 		cout << "Nome: " << raiz->item.nomeItem 
@@ -315,7 +373,7 @@ void mostrarArvore(Node * raiz){// mostra a árvore inteira
 		mostrarArvore(raiz->dir);// mostro os valores do nó a direita
 }
 
-
+//-------------------------------------------------------------------------------------------------------------
 void listarItemA(){ //listar item em ordem alfabética
     limparTela();
     cout << VERDE << NEGRITO;
@@ -328,7 +386,7 @@ void listarItemA(){ //listar item em ordem alfabética
     cout << RESET << endl;
     esperarESC();
 }
-
+//-------------------------------------------------------------------------------------------------------------
 void listarItemR(){ //listar itens em ordem decrescente de raridade
     limparTela();
     cout << VERDE << NEGRITO;
@@ -337,27 +395,13 @@ void listarItemR(){ //listar itens em ordem decrescente de raridade
     centralizar("+=====================================+");
     cout << RESET << VERDE << endl;
 
-    Node * raizR = NULL;
-
-    list<inserirObj>::iterator it;
-    for(it = itens.begin(); it != itens.end(); it++){
-        inserirABBRaridade(raizR, *it);
-    }
-
-    if(raizR == NULL){
-        centralizar("|        >> Nenhum item cadastrado! <<|");
-    }else{
-        mostrarRaridadeDecrescente(raizR);
-    }
-
-    destruirArvore(raizR);
+	mostrarRaridadeDecrescente(raizR);
 
     cout << RESET << endl;
     esperarESC();
 }
-
-void contarItens(){
-
+//------------------------------------------------------------------------------------------------------------
+void contarItens(){//conta quantidade de itens com a mesma propriedade magica
     limparTela();
     cout << VERDE << NEGRITO;
     centralizar("+=====================================+");
@@ -374,17 +418,38 @@ void contarItens(){
 
     list<inserirObj>::iterator it;
     for(it = itens.begin(); it != itens.end(); it++){
-		
         if(it->propMagica == prop){ // aqui faz a verificação da propriedade
             cont++;
         }
     }
-
     cout << endl;
-    cout << "Quantidade de itens com essa propriedade: " << cont << endl;
-
+    if(cont > 0){
+    	cout << "Quantidade de itens com essa propriedade: " << cont << endl;
+	}else{
+    	cout << "Nenhum item possui essa propriedade." << endl;
+	}
     cout << RESET << endl;
     esperarESC();
+}
+//---------------------------------------------------------------------------------------------------------
+void destruirArvore(Node *& raiz){//destruo a arvore
+    if(raiz != NULL){
+        destruirArvore(raiz->esq);
+        destruirArvore(raiz->dir);
+        delete raiz;
+        raiz = NULL;
+    }
+} 
+	
+void reconstruirArvore(){//reconstruo as arvore com os elementos que restaram
+    destruirArvore(raiz); // apaga toda a arvore
+	destruirArvore(raizR);
+	
+    list<inserirObj>::iterator it; // percorre a lista de itens restantes
+    for(it = itens.begin(); it != itens.end(); it++){
+        inserirABB(raiz, *it); // insere denovo cada item na arvore
+    	inserirABBRaridade(raizR, *it);
+	}
 }
 
 void remover(){
@@ -395,18 +460,15 @@ void remover(){
     centralizar("+=====================================+");
     cout << RESET << VERDE << endl;
 
-    int R;
+    int R = 0;
     centralizar("Remover itens com raridade menor que: ", false);
     cin >> R;
-
-    int removidos = 0;
 
     list<inserirObj>::iterator it = itens.begin(); // iterador q percorre a lista de itens
 
     while(it != itens.end()){
         if(it->raridade < R){  // verificação de raridade
-            it = itens.erase(it);
-            removidos++;
+            it = itens.erase(it);//Ele apaga apenas o elemento para o qual o iterador está apontando naquele momento
         } else {
             it++;
         }
@@ -415,9 +477,11 @@ void remover(){
     reconstruirArvore(); // atualiza a arvore binaria
 
     cout << endl;
-    cout << "Quantidade de itens removidos: " << removidos << endl;
-
+    centralizar("+-------------------------------------+");
+    centralizar("|      >> Itens removidos! <<   |");
+    centralizar("+-------------------------------------+");
     cout << RESET << endl;
+
     esperarESC();
 }
 
@@ -495,7 +559,6 @@ int main (){
 		}
 	}
 	while(opcao != 9);
-
 
 	return 0;
 } 
