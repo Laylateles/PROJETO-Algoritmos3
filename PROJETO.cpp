@@ -37,6 +37,14 @@ void centralizar(string texto, bool quebrarLinha = true){ //funcao que centraliz
         cout << endl;
 }
 
+void centralizarInput(string label){ //funcao que centraliza o input
+    int larguraTela = 80;
+    int espacos = (larguraTela - label.length()) / 2;
+    for(int i = 0; i < espacos; i++)
+        cout << " ";
+    cout << label;
+}
+
 //função para limpar a tela
 void limparTela(){
     system("cls");
@@ -204,12 +212,12 @@ void inserirItem(){//insere um item na arvore binaria
 	for(int i = 0; i < novo.qtdVertices; i++){
 	    cout << endl;
 	    
-	    cout << "Vertice " << i + 1 << endl;
+	    centralizar("Vertice ", i + 1);
 	
-	    cout << "X: ";
+	    centralizar("X: ", false);
 	    cin >> novo.contorno[i].x;
 	
-	    cout << "Y: ";
+	    centralizar("Y: ", false);
 	    cin >> novo.contorno[i].y;
 	}
 	int largura = larguraPoligono(novo);
@@ -297,10 +305,10 @@ void buscarItens(){//busca os itens pela sua similaridade
         if(it->peso > X){
             for(it2 = itens.begin(); it2 != itens.end(); it2++){
                 if(it2->id == it->destino && it2->nomeDono != jogadorJ){
-                    cout << "| ID: "         << it2->id       << endl;
-                    cout << "| Nome: "       << it2->nomeItem << endl;
-                    cout << "| Dono: "       << it2->nomeDono << endl;
-                    cout << "| Similaridade: " << it->peso   << endl;
+                    cout << "| ID: "         << it2->id;
+                    cout << "| Nome: "       << it2->nomeItem;
+                    cout << "| Dono: "       << it2->nomeDono;
+                    cout << "| Similaridade: " << it->peso;
                     centralizar("+-------------------------------------+");
                     encontrou = true;
                 }
@@ -411,7 +419,7 @@ void contarItens(){//conta quantidade de itens com a mesma propriedade magica
     string prop;
     int cont = 0;
 
-    centralizar("Digite a propriedade magica: ", false);
+    centralizar("Digite a propriedade magica: ");
     cin.ignore();
     getline(cin, prop);
 
@@ -460,7 +468,7 @@ void remover(){
     cout << RESET << VERDE << endl;
 
     int R = 0;
-    centralizar("Remover itens com raridade menor que: ", false);
+    centralizar("Remover itens com raridade menor que: ");
     cin >> R;
 
     list<inserirObj>::iterator it = itens.begin(); // iterador q percorre a lista de itens
