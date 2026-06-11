@@ -76,7 +76,7 @@ struct inserirObj{
 	string nomeItem, nomeDono, propMagica;
 	int id, raridade; // raridade = numero de 0 a 100 onde 0=comum,100=raríssimo
     int qtdVertices;
-    Ponto contorno[10];//assumindo que um item terá no maximo 20 vertices
+    Ponto contorno[10];//assumindo que um item terá no maximo 10 vertices
 };
 
 // Struct que representa uma aresta do grafo de similaridade
@@ -109,7 +109,6 @@ int larguraPoligono(inserirObj item){//para calcular a largura do item
     }
     return maiorX - menorX;//retorna a largura do item
 }
-
 
 
 //-----------------------------------------------------------------------------------------------------------
@@ -149,15 +148,33 @@ void mostrarRaridadeDecrescente(Node * raizR){//mostra os objetos pela raridade 
 
     mostrarRaridadeDecrescente(raizR->dir);
 
-    cout << "Nome: " << raizR->item.nomeItem
+    cout << " | Nome: " << raizR->item.nomeItem
          << " | ID: " << raizR->item.id
          << " | Dono: " << raizR->item.nomeDono
          << " | Propriedade: " << raizR->item.propMagica
          << " | Raridade: " << raizR->item.raridade
-         << endl;
-         
+         << " | Vertices: ";
+		for(int i = 0; i < raiz->item.qtdVertices; i++){
+   	   	   cout << "("
+		         << raiz->item.contorno[i].x
+		         << ", "
+		         << raiz->item.contorno[i].y
+		         << ") ";
+		}
+			
+cout << endl;
     mostrarRaridadeDecrescente(raizR->esq);
 } 
+//------------------------------------------------------------------------------------------------------------
+bool idExiste(int id){//função criada para impedir do usuario adicionar dois objetos com o mesmo ID
+    list<inserirObj>::iterator it;
+    for(it = itens.begin(); it != itens.end(); it++){
+        if(it->id == id){
+            return true;
+        }
+    }
+    return false;
+}
 
 //------------------------------------------------------------------------------------------------------------
 void inserirItem(){//insere um item na arvore binaria
@@ -182,6 +199,14 @@ void inserirItem(){//insere um item na arvore binaria
 
     centralizar("ID: ", false);
     cin >> novo.id;
+    if(idExiste(novo.id)){
+	    cout << endl;
+	    centralizar("+-------------------------------------+");
+	    centralizar("| ID JA CADASTRADO!                   |");
+	    centralizar("+-------------------------------------+");
+	    esperarESC();
+	    return;
+	}
 
     centralizar("Raridade (0 a 100): ", false);
     cin >> novo.raridade;
@@ -309,6 +334,16 @@ void buscarItens(){//busca os itens pela sua similaridade
                     cout << "| Nome: "       << it2->nomeItem;
                     cout << "| Dono: "       << it2->nomeDono;
                     cout << "| Similaridade: " << it->peso;
+                    cout << "| Propriedade: " << it2->propMagica;
+                    cout << "| Vertices: ";
+					for(int i = 0; i < raiz->item.qtdVertices; i++){
+					    cout << "("
+					         << raiz->item.contorno[i].x
+					         << ", "
+					         << raiz->item.contorno[i].y
+					         << ") ";
+					}
+					cout << endl;
                     centralizar("+-------------------------------------+");
                     encontrou = true;
                 }
@@ -371,11 +406,21 @@ void verificarItem(){ //verificar se o item existe
 void mostrarArvore(Node * raiz){// mostra a árvore inteira -- pelo nome do item
 	if(raiz->esq != NULL)// se tiver nó a esquerda
 		mostrarArvore(raiz->esq);// mostro o nó da esquerda
-		cout << "Nome: " << raiz->item.nomeItem 
+		cout << " | Nome: " << raiz->item.nomeItem 
              << " | ID: " << raiz->item.id 
              << " | Dono: " << raiz->item.nomeDono 
 			 << " | Propriedade Magica: " << raiz->item.propMagica 
-             << " | Raridade: " << raiz->item.raridade << endl;
+             << " | Raridade: " << raiz->item.raridade 
+			 << " | Vertices: ";
+			for(int i = 0; i < raiz->item.qtdVertices; i++){
+			    cout << "("
+			         << raiz->item.contorno[i].x
+			         << ", "
+			         << raiz->item.contorno[i].y
+			         << ") ";
+			}
+			
+			cout << endl;
 	if(raiz->dir != NULL) // se tiver nó na direita
 		mostrarArvore(raiz->dir);// mostro os valores do nó a direita
 }
