@@ -4,7 +4,6 @@ Layla Victória Sousa Teles, 2426
 Livia Oliveira Santos, 2290
 Maria Clara Freitas Soares, 712
 Miguel Borges Magalhães, 978
-Ruan Carlo Martins Garcia,487
 */
 
 #include <iostream>
@@ -38,6 +37,14 @@ void centralizar(string texto, bool quebrarLinha = true){ //funcao que centraliz
         cout << endl;
 }
 
+void centralizarInput(string label){ //funcao que centraliza o input
+    int larguraTela = 80;
+    int espacos = (larguraTela - label.length()) / 2;
+    for(int i = 0; i < espacos; i++)
+        cout << " ";
+    cout << label;
+}
+
 //função para limpar a tela
 void limparTela(){
     system("cls");
@@ -69,7 +76,7 @@ struct inserirObj{
 	string nomeItem, nomeDono, propMagica;
 	int id, raridade; // raridade = numero de 0 a 100 onde 0=comum,100=raríssimo
     int qtdVertices;
-    Ponto contorno[10];//assumindo que um item terá no maximo 20 vertices
+    Ponto contorno[10];//assumindo que um item terá no maximo 10 vertices
 };
 
 // Struct que representa uma aresta do grafo de similaridade
@@ -102,7 +109,6 @@ int larguraPoligono(inserirObj item){//para calcular a largura do item
     }
     return maiorX - menorX;//retorna a largura do item
 }
-
 
 
 //-----------------------------------------------------------------------------------------------------------
@@ -142,15 +148,33 @@ void mostrarRaridadeDecrescente(Node * raizR){//mostra os objetos pela raridade 
 
     mostrarRaridadeDecrescente(raizR->dir);
 
-    cout << "Nome: " << raizR->item.nomeItem
+    cout << " | Nome: " << raizR->item.nomeItem
          << " | ID: " << raizR->item.id
          << " | Dono: " << raizR->item.nomeDono
          << " | Propriedade: " << raizR->item.propMagica
          << " | Raridade: " << raizR->item.raridade
-         << endl;
-         
+         << " | Vertices: ";
+		for(int i = 0; i < raiz->item.qtdVertices; i++){
+   	   	   cout << "("
+		         << raiz->item.contorno[i].x
+		         << ", "
+		         << raiz->item.contorno[i].y
+		         << ") ";
+		}
+			
+cout << endl;
     mostrarRaridadeDecrescente(raizR->esq);
 } 
+//------------------------------------------------------------------------------------------------------------
+bool idExiste(int id){//função criada para impedir do usuario adicionar dois objetos com o mesmo ID
+    list<inserirObj>::iterator it;
+    for(it = itens.begin(); it != itens.end(); it++){
+        if(it->id == id){
+            return true;
+        }
+    }
+    return false;
+}
 
 //------------------------------------------------------------------------------------------------------------
 void inserirItem(){//insere um item na arvore binaria
@@ -175,6 +199,14 @@ void inserirItem(){//insere um item na arvore binaria
 
     centralizar("ID: ", false);
     cin >> novo.id;
+    if(idExiste(novo.id)){
+	    cout << endl;
+	    centralizar("+-------------------------------------+");
+	    centralizar("| ID JA CADASTRADO!                   |");
+	    centralizar("+-------------------------------------+");
+	    esperarESC();
+	    return;
+	}
 
     centralizar("Raridade (0 a 100): ", false);
     cin >> novo.raridade;
@@ -205,12 +237,12 @@ void inserirItem(){//insere um item na arvore binaria
 	for(int i = 0; i < novo.qtdVertices; i++){
 	    cout << endl;
 	    
-	    cout << "Vertice " << i + 1 << endl;
+	    centralizar("Vertice ", i + 1);
 	
-	    cout << "X: ";
+	    centralizar("X: ", false);
 	    cin >> novo.contorno[i].x;
 	
-	    cout << "Y: ";
+	    centralizar("Y: ", false);
 	    cin >> novo.contorno[i].y;
 	}
 	int largura = larguraPoligono(novo);
@@ -298,10 +330,20 @@ void buscarItens(){//busca os itens pela sua similaridade
         if(it->peso > X){
             for(it2 = itens.begin(); it2 != itens.end(); it2++){
                 if(it2->id == it->destino && it2->nomeDono != jogadorJ){
-                    cout << "| ID: "         << it2->id       << endl;
-                    cout << "| Nome: "       << it2->nomeItem << endl;
-                    cout << "| Dono: "       << it2->nomeDono << endl;
-                    cout << "| Similaridade: " << it->peso   << endl;
+                    cout << "| ID: "         << it2->id;
+                    cout << "| Nome: "       << it2->nomeItem;
+                    cout << "| Dono: "       << it2->nomeDono;
+                    cout << "| Similaridade: " << it->peso;
+                    cout << "| Propriedade: " << it2->propMagica;
+                    cout << " | Vertices: ";
+					for(int i = 0; i < raiz->item.qtdVertices; i++){
+					    cout << "("
+					         << raiz->item.contorno[i].x
+					         << ", "
+					         << raiz->item.contorno[i].y
+					         << ") ";
+					}
+					cout << endl;
                     centralizar("+-------------------------------------+");
                     encontrou = true;
                 }
@@ -364,11 +406,21 @@ void verificarItem(){ //verificar se o item existe
 void mostrarArvore(Node * raiz){// mostra a árvore inteira -- pelo nome do item
 	if(raiz->esq != NULL)// se tiver nó a esquerda
 		mostrarArvore(raiz->esq);// mostro o nó da esquerda
-		cout << "Nome: " << raiz->item.nomeItem 
+		cout << " | Nome: " << raiz->item.nomeItem 
              << " | ID: " << raiz->item.id 
              << " | Dono: " << raiz->item.nomeDono 
 			 << " | Propriedade Magica: " << raiz->item.propMagica 
-             << " | Raridade: " << raiz->item.raridade << endl;
+             << " | Raridade: " << raiz->item.raridade 
+			 << " | Vertices: ";
+			for(int i = 0; i < raiz->item.qtdVertices; i++){
+			    cout << "("
+			         << raiz->item.contorno[i].x
+			         << ", "
+			         << raiz->item.contorno[i].y
+			         << ") ";
+			}
+			
+			cout << endl;
 	if(raiz->dir != NULL) // se tiver nó na direita
 		mostrarArvore(raiz->dir);// mostro os valores do nó a direita
 }
@@ -412,7 +464,7 @@ void contarItens(){//conta quantidade de itens com a mesma propriedade magica
     string prop;
     int cont = 0;
 
-    centralizar("Digite a propriedade magica: ", false);
+    centralizar("Digite a propriedade magica: ");
     cin.ignore();
     getline(cin, prop);
 
@@ -461,7 +513,7 @@ void remover(){
     cout << RESET << VERDE << endl;
 
     int R = 0;
-    centralizar("Remover itens com raridade menor que: ", false);
+    centralizar("Remover itens com raridade menor que: ");
     cin >> R;
 
     list<inserirObj>::iterator it = itens.begin(); // iterador q percorre a lista de itens
