@@ -335,7 +335,7 @@ void buscarItens(){//busca os itens pela sua similaridade
                     cout << "| Dono: "       << it2->nomeDono;
                     cout << "| Similaridade: " << it->peso;
                     cout << "| Propriedade: " << it2->propMagica;
-                    cout << " | Vertices: ";
+                    cout << "| Vertices: ";
 					for(int i = 0; i < raiz->item.qtdVertices; i++){
 					    cout << "("
 					         << raiz->item.contorno[i].x
